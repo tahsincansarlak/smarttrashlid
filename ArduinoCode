@@ -1,0 +1,70 @@
+// Tahsin Can Sarlak
+// Trash bin Lid
+
+int trigPin = 11;    // Trigger PWM
+int echoPin = 10;    // Echo
+long threshold = 20;  // A variable to compare the sensor reading with
+long duration, cm, inches;
+
+// The pins of stepper motor will be connected these pins on an Arduino
+#define ENABLE 5
+#define DIRA 3
+#define DIRB 4
+
+// Sets up the necessary pins on the motor as output 
+// Sets up the necessary pins on the sensor as input and output
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ENABLE,OUTPUT);
+  pinMode(DIRA,OUTPUT);
+  pinMode(DIRB,OUTPUT);
+}
+
+// Calls the necessary functions
+void loop() {
+  sensor_reading();
+  lid();
+}
+
+void lid(){
+  // compares the distance reading with a threshold and either moves the lid up or down
+  if( cm < threshold){
+    // Opens the lid
+    digitalWrite(ENABLE,HIGH); // enable on
+    digitalWrite(DIRA,HIGH);  
+    digitalWrite(DIRB,LOW);
+    delay(1400);
+    
+    // Stops the motor
+    digitalWrite(ENABLE,LOW); // enable off 
+    delay(5000);
+    
+    // Moves the motor down
+    digitalWrite(ENABLE,HIGH); // enable on  
+    digitalWrite(DIRA,LOW);  
+    digitalWrite(DIRB,HIGH);
+    delay(500);
+  }
+  
+  else {
+    digitalWrite(ENABLE,LOW); // enable off  
+  }
+  
+}
+
+// This function reads the distance using the sensor
+void sensor_reading(){
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+ 
+  duration = pulseIn(echoPin, HIGH);
+
+  // Converts the reading into cm
+  cm = (duration/2) / 29.1;   
+  delay(100);
+}
